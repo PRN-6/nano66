@@ -90,6 +90,11 @@ export class AnimationController {
     const canvas = this.canvasManager.createOverlay(this.config.target);
     await this.renderer.init(canvas);
 
+    if (this.isDestroyed) {
+      this.destroy();
+      return;
+    }
+
     this.canvasManager.onResize((w, h, dpr) => {
       this.renderer.resize(w, h, dpr);
       this.particleSystem.updateDimensions(w, h);

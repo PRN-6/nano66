@@ -18,6 +18,7 @@ export class Nano66 {
   private accessibility: AccessibilityManager;
   private controller: AnimationController | null = null;
   private isInitialized: boolean = false;
+  private isDestroyed: boolean = false;
   private initPromise: Promise<void> | null = null;
 
   constructor(options: Nano66Options = {}) {
@@ -105,15 +106,22 @@ export class Nano66 {
    * Can be called explicitly, or will be called automatically by start().
    */
   public async init(): Promise<void> {
-    if (this.isInitialized) return;
+    if (this.isDestroyed || this.isInitialized) return;
     if (this.initPromise) return this.initPromise;
 
     this.initPromise = (async () => {
       try {
+        if (this.isDestroyed) return;
         this.controller = new AnimationController(this.config, this.stateManager, this.events);
         await this.controller.init();
+        if (this.isDestroyed) {
+          this.controller?.destroy();
+          this.controller = null;
+          return;
+        }
         this.isInitialized = true;
       } catch (err: any) {
+        if (this.isDestroyed) return;
         this.events.emit("error", err instanceof Error ? err : new Error(String(err)));
         throw err;
       }
@@ -126,6 +134,8 @@ export class Nano66 {
    * Start the particle construction animation
    */
   public async start(): Promise<void> {
+    if (this.isDestroyed) return;
+
     // If user prefers reduced motion and immediate reveal is set, skip
     if (this.accessibility.shouldSkipAnimation()) {
       this.stateManager.transitionTo("completed");
@@ -137,6 +147,8 @@ export class Nano66 {
       await this.init();
     }
 
+    if (this.isDestroyed) return;
+
     this.controller?.start();
   }
 
@@ -144,6 +156,7 @@ export class Nano66 {
    * Pause the active animation
    */
   public pause(): void {
+    if (this.isDestroyed) return;
     this.controller?.pause();
   }
 
@@ -151,6 +164,7 @@ export class Nano66 {
    * Resume paused animation
    */
   public resume(): void {
+    if (this.isDestroyed) return;
     this.controller?.resume();
   }
 
@@ -158,6 +172,7 @@ export class Nano66 {
    * Skip remaining animation and immediately reveal full website
    */
   public skip(): void {
+    if (this.isDestroyed) return;
     this.controller?.skip();
   }
 
@@ -165,6 +180,7 @@ export class Nano66 {
    * Restart animation from beginning
    */
   public restart(): void {
+    if (this.isDestroyed) return;
     this.controller?.restart();
   }
 
@@ -172,6 +188,8 @@ export class Nano66 {
    * Completely clean up canvas, listeners, and memory
    */
   public destroy(): void {
+    if (this.isDestroyed) return;
+    this.isDestroyed = true;
     this.accessibility.destroy();
     this.controller?.destroy();
     this.controller = null;

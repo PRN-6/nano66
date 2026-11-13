@@ -28,7 +28,7 @@ export class StateManager {
   public transitionTo(nextState: NanoState): boolean {
     if (this.currentState === nextState) return false;
     if (this.currentState === "destroyed") {
-      console.warn("[Nano66] Cannot transition state on a destroyed instance.");
+      // Instance is destroyed, ignore further state transitions
       return false;
     }
 

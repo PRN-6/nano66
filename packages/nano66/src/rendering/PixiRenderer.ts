@@ -10,18 +10,23 @@ export class PixiRenderer implements Renderer {
   private sprites: Sprite[] = [];
   private fallbackRenderer: CanvasFallbackRenderer | null = null;
   private isFallback: boolean = false;
+  private isDestroyed: boolean = false;
   private width: number = 0;
   private height: number = 0;
   private dpr: number = 1;
 
   public async init(canvas: HTMLCanvasElement): Promise<void> {
+    if (this.isDestroyed) return;
+
     this.width = window.innerWidth || 1920;
     this.height = window.innerHeight || 1080;
     this.dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     try {
-      this.app = new Application();
-      await this.app.init({
+      const app = new Application();
+      this.app = app;
+
+      await app.init({
         canvas,
         width: this.width,
         height: this.height,
@@ -32,12 +37,19 @@ export class PixiRenderer implements Renderer {
         preference: "webgl",
       });
 
+      if (this.isDestroyed) {
+        this.safeDestroyApp(app);
+        this.app = null;
+        return;
+      }
+
       this.particleContainer = new Container();
       this.app.stage.addChild(this.particleContainer);
 
       // Create a smooth circular glow particle texture (16x16)
       this.particleTexture = this.generateParticleTexture();
     } catch (err) {
+      if (this.isDestroyed) return;
       console.warn("[Nano66] WebGL initialization failed, switching to Canvas2D fallback renderer:", err);
       this.isFallback = true;
       this.fallbackRenderer = new CanvasFallbackRenderer();
@@ -162,6 +174,9 @@ export class PixiRenderer implements Renderer {
   }
 
   public destroy(): void {
+    if (this.isDestroyed) return;
+    this.isDestroyed = true;
+
     if (this.isFallback && this.fallbackRenderer) {
       this.fallbackRenderer.destroy();
       this.fallbackRenderer = null;
@@ -169,23 +184,44 @@ export class PixiRenderer implements Renderer {
     }
 
     for (const sprite of this.sprites) {
-      sprite.destroy();
+      try {
+        sprite.destroy();
+      } catch (_) {}
     }
     this.sprites = [];
 
     if (this.particleTexture) {
-      this.particleTexture.destroy(true);
+      try {
+        this.particleTexture.destroy(true);
+      } catch (_) {}
       this.particleTexture = null;
     }
 
     if (this.particleContainer) {
-      this.particleContainer.destroy({ children: true });
+      try {
+        this.particleContainer.destroy({ children: true });
+      } catch (_) {}
       this.particleContainer = null;
     }
 
     if (this.app) {
-      this.app.destroy(true, { children: true, texture: true });
+      this.safeDestroyApp(this.app);
       this.app = null;
+    }
+  }
+
+  private safeDestroyApp(app: Application): void {
+    try {
+      const appAny = app as any;
+      if (typeof appAny._cancelResize !== "function") {
+        appAny._cancelResize = () => {};
+      }
+      if (typeof appAny.queueResize !== "function") {
+        appAny.queueResize = () => {};
+      }
+      app.destroy(true, { children: true, texture: true });
+    } catch (_) {
+      // Ignore internal Pixi teardown quirks during rapid lifecycle unmount
     }
   }
 }
