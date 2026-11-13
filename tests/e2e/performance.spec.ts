@@ -10,8 +10,9 @@ test.describe("Performance & Responsive Behavior", () => {
     // Resize viewport to mobile size
     await page.setViewportSize({ width: 375, height: 667 });
 
-    const canvasWidth = await canvas.evaluate((el: HTMLCanvasElement) => el.width);
-    expect(canvasWidth).toBeLessThanOrEqual(375 * 2 + 10);
+    await expect
+      .poll(async () => canvas.evaluate((el: HTMLCanvasElement) => el.width))
+      .toBeLessThanOrEqual(375 * 2 + 10);
   });
 
   test("runs smoothly and finishes construction without uncaught console errors", async ({ page }) => {

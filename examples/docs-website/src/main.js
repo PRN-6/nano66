@@ -75,6 +75,14 @@ function initNanoAnimation() {
     if (engineStatus) engineStatus.innerText = "Ready";
   });
 
+  nano.on("introStart", () => {
+    if (engineStatus) engineStatus.innerText = "Swimming goldfish 🐟";
+  });
+
+  nano.on("introScatter", () => {
+    if (engineStatus) engineStatus.innerText = "Scattering stardust ✨";
+  });
+
   nano.on("start", () => {
     if (engineStatus) engineStatus.innerText = "Constructing...";
     if (btnPause) btnPause.disabled = false;
@@ -83,6 +91,7 @@ function initNanoAnimation() {
 
   nano.on("stateChange", (state) => {
     if (engineStatus) {
+      if (state === "intro") engineStatus.innerText = "Swimming goldfish 🐟";
       if (state === "attracting") engineStatus.innerText = "Absorbing dust...";
       if (state === "completed") engineStatus.innerText = "Completed";
       if (state === "paused") engineStatus.innerText = "Paused";

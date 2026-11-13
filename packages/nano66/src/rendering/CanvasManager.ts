@@ -28,13 +28,14 @@ export class CanvasManager {
     this.updateDimensions();
 
     // Setup window & element resize listener
+    if (typeof window !== "undefined") {
+      window.addEventListener("resize", this.handleResize);
+    }
     if (typeof ResizeObserver !== "undefined") {
       this.resizeObserver = new ResizeObserver(() => {
         this.updateDimensions();
       });
       this.resizeObserver.observe(document.body);
-    } else {
-      window.addEventListener("resize", this.handleResize);
     }
 
     return canvas;
@@ -70,11 +71,13 @@ export class CanvasManager {
   }
 
   public destroy(): void {
+    if (typeof window !== "undefined") {
+      window.removeEventListener("resize", this.handleResize);
+    }
+
     if (this.resizeObserver) {
       this.resizeObserver.disconnect();
       this.resizeObserver = null;
-    } else if (typeof window !== "undefined") {
-      window.removeEventListener("resize", this.handleResize);
     }
 
     if (this.canvas && this.canvas.parentNode) {

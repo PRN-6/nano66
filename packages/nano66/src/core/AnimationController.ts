@@ -10,6 +10,7 @@ import type { Renderer } from "../rendering/Renderer";
 import { ParticleSystem } from "../particles/ParticleSystem";
 import { ConstructionTimeline } from "../animation/ConstructionTimeline";
 import { CursorAttraction } from "../animation/CursorAttraction";
+import { GoldfishIntro } from "../animation/GoldfishIntro";
 import { PerformanceMonitor } from "../utils/PerformanceMonitor";
 import { ColorUtils } from "../utils/ColorUtils";
 
@@ -26,6 +27,7 @@ export class AnimationController {
   private cursorAttraction: CursorAttraction;
   private performanceMonitor: PerformanceMonitor;
   private timeline: ConstructionTimeline | null = null;
+  private goldfishIntro: GoldfishIntro | null = null;
 
   private elements: NanoElement[] = [];
   private rafId: number | null = null;
@@ -48,6 +50,19 @@ export class AnimationController {
     this.particleSystem = new ParticleSystem(config.particles.count, config.particles.seed);
     this.cursorAttraction = new CursorAttraction();
     this.performanceMonitor = new PerformanceMonitor();
+
+    if (config.intro?.enabled) {
+      this.goldfishIntro = new GoldfishIntro(
+        this.particleSystem.pool,
+        config.intro.duration,
+        () => {
+          this.events.emit("introScatter");
+        },
+        () => {
+          this.transitionFromIntroToConstruction();
+        }
+      );
+    }
 
     this.performanceMonitor.setVisibilityCallback((visible) => {
       if (!visible && this.stateManager.isRunning()) {
@@ -174,11 +189,26 @@ export class AnimationController {
     }
 
     this.cursorAttraction.startListening();
+
+    if (this.config.intro?.enabled && this.goldfishIntro) {
+      this.stateManager.transitionTo("intro");
+      this.events.emit("introStart");
+      const dims = this.canvasManager.getDimensions();
+      this.goldfishIntro.start(dims.width, dims.height);
+      this.startLoop();
+    } else {
+      this.transitionFromIntroToConstruction();
+      this.startLoop();
+    }
+  }
+
+  private transitionFromIntroToConstruction(): void {
+    if (this.isDestroyed || this.stateManager.is("completed")) return;
+
     this.stateManager.transitionTo("constructing");
     this.events.emit("start");
 
     this.timeline?.start();
-    this.startLoop();
   }
 
   private handleAllElementsConstructed(): void {
@@ -212,6 +242,15 @@ export class AnimationController {
   }
 
   private update(delta: number, timestamp: number): void {
+    // 1. If in intro phase, update the 50-particle swimming goldfish
+    if (this.stateManager.is("intro") && this.goldfishIntro) {
+      this.goldfishIntro.update(delta, timestamp);
+
+      // Render the glowing goldfish particles
+      this.renderer.render(this.particleSystem.getActiveParticles(), true);
+      return;
+    }
+
     const cursor = this.cursorAttraction.getCursorPosition();
     this.particleSystem.setCursor(cursor.x, cursor.y);
 
@@ -266,7 +305,12 @@ export class AnimationController {
     if (!this.stateManager.is("paused")) return;
 
     const previous = this.stateManager.getPreviousState();
-    const resumeState = previous === "attracting" ? "attracting" : "constructing";
+    const resumeState =
+      previous === "attracting"
+        ? "attracting"
+        : previous === "intro"
+        ? "intro"
+        : "constructing";
     this.stateManager.transitionTo(resumeState);
     this.events.emit("resume");
 
@@ -275,6 +319,10 @@ export class AnimationController {
 
   public skip(): void {
     if (this.isDestroyed) return;
+
+    if (this.goldfishIntro) {
+      this.goldfishIntro.finish();
+    }
 
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);

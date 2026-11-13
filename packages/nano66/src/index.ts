@@ -23,3 +23,4 @@ export { MathUtils, PRNG } from "./utils/MathUtils";
 export { ColorUtils } from "./utils/ColorUtils";
 export { PerformanceMonitor } from "./utils/PerformanceMonitor";
 export { AccessibilityManager } from "./accessibility/AccessibilityManager";
+export { GoldfishIntro, GOLDFISH_50_POINTS } from "./animation/GoldfishIntro";

@@ -35,6 +35,14 @@ nano.on("ready", () => {
   if (statusPill) statusPill.innerText = "Ready";
 });
 
+nano.on("introStart", () => {
+  if (statusPill) statusPill.innerText = "Swimming goldfish...";
+});
+
+nano.on("introScatter", () => {
+  if (statusPill) statusPill.innerText = "Scattering particles...";
+});
+
 nano.on("start", () => {
   if (statusPill) statusPill.innerText = "Constructing...";
 });
@@ -55,6 +63,7 @@ nano.on("elementStart", (el) => {
 
 nano.on("stateChange", (state) => {
   if (statusPill) {
+    if (state === "intro") statusPill.innerText = "Swimming goldfish...";
     if (state === "attracting") statusPill.innerText = "Absorbing dust...";
     if (state === "completed") statusPill.innerText = "Interactive";
     if (state === "paused") statusPill.innerText = "Paused";

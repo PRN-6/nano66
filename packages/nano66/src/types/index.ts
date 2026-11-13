@@ -6,6 +6,7 @@ export type NanoState =
   | "ready"
   | "scanning"
   | "concealing"
+  | "intro"
   | "constructing"
   | "attracting"
   | "completed"

@@ -2,6 +2,8 @@ import type { NanoElement, NanoState } from "./index";
 
 export interface Nano66EventMap {
   ready: () => void;
+  introStart: () => void;
+  introScatter: () => void;
   start: () => void;
   elementStart: (element: NanoElement) => void;
   elementReveal: (element: NanoElement) => void;

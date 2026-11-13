@@ -22,7 +22,11 @@ export class StateManager {
   }
 
   public isRunning(): boolean {
-    return this.currentState === "constructing" || this.currentState === "attracting";
+    return (
+      this.currentState === "intro" ||
+      this.currentState === "constructing" ||
+      this.currentState === "attracting"
+    );
   }
 
   public transitionTo(nextState: NanoState): boolean {

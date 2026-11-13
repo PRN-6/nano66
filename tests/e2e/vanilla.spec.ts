@@ -45,7 +45,7 @@ test.describe("Website 1 — Vanilla Integration", () => {
     const statusPill = page.locator("#status-pill");
 
     // Wait until animation is in progress
-    await expect(statusPill).toHaveText(/Building|Constructing/);
+    await expect(statusPill).toHaveText(/Building|Constructing|Swimming|Scattering/);
 
     // Click pause
     await pauseBtn.click();
@@ -59,7 +59,7 @@ test.describe("Website 1 — Vanilla Integration", () => {
     // Click restart
     const restartBtn = page.locator("#btn-restart");
     await restartBtn.click();
-    await expect(statusPill).toHaveText(/Building|Constructing|Ready/);
+    await expect(statusPill).toHaveText(/Building|Constructing|Swimming|Scattering|Ready/);
   });
 
   test("toggles dark and light themes smoothly", async ({ page }) => {

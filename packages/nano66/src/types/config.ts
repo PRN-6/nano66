@@ -8,6 +8,34 @@ export type AnimationMode = "sequential" | "grouped" | "parallel";
 
 export type PerformancePreset = "low" | "balanced" | "ultra";
 
+export interface IntroConfig {
+  /**
+   * Whether to play the 50-particle goldfish prologue animation.
+   * The particles assemble into a swimming goldfish that undulates across the screen,
+   * bursts/scatters outward, and then initiates website element construction.
+   * Default: true
+   */
+  enabled?: boolean;
+
+  /**
+   * Number of particles forming the goldfish prologue.
+   * Default: 50
+   */
+  particleCount?: number;
+
+  /**
+   * Duration of the goldfish swimming sequence in milliseconds before scattering.
+   * Default: 2600
+   */
+  duration?: number;
+
+  /**
+   * Color palette for the goldfish particles.
+   * Default: ['#FFB800', '#FF8C00', '#FFA500', '#FFE082', '#FFFFFF']
+   */
+  colors?: string[];
+}
+
 export interface AnimationConfig {
   /**
    * Construction mode:
@@ -162,6 +190,11 @@ export interface Nano66Options {
    * Accessibility settings
    */
   accessibility?: AccessibilityConfig;
+
+  /**
+   * Cinematic intro options (50-particle swimming goldfish prologue)
+   */
+  intro?: IntroConfig;
 }
 
 /**
@@ -182,4 +215,5 @@ export interface ResolvedNano66Config {
   theme: ThemeMode;
   performance: Required<PerformanceConfig>;
   accessibility: Required<AccessibilityConfig>;
+  intro: Required<IntroConfig>;
 }

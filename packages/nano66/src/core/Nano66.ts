@@ -98,6 +98,12 @@ export class Nano66 {
         respectReducedMotion: options.accessibility?.respectReducedMotion ?? true,
         immediateReveal: options.accessibility?.immediateReveal ?? true,
       },
+      intro: {
+        enabled: options.intro?.enabled ?? true,
+        particleCount: options.intro?.particleCount ?? 50,
+        duration: options.intro?.duration ?? 2600,
+        colors: options.intro?.colors ?? ["#FFB800", "#FF8C00", "#FFA500", "#FFE082", "#FFFFFF"],
+      },
     };
   }
 

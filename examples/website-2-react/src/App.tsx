@@ -58,6 +58,8 @@ export const App: React.FC = () => {
     nanoRef.current = nano;
 
     nano.on("ready", () => setStatus("Ready"));
+    nano.on("introStart", () => setStatus("Swimming Goldfish 🐟"));
+    nano.on("introScatter", () => setStatus("Scattering Particles ✨"));
     nano.on("start", () => setStatus("Constructing"));
     nano.on("complete", () => setStatus("Interactive"));
 
