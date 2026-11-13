@@ -11,6 +11,7 @@ import { ParticleSystem } from "../particles/ParticleSystem";
 import { ConstructionTimeline } from "../animation/ConstructionTimeline";
 import { CursorAttraction } from "../animation/CursorAttraction";
 import { GoldfishIntro } from "../animation/GoldfishIntro";
+import { FishTransition } from "../animation/FishTransition";
 import { PerformanceMonitor } from "../utils/PerformanceMonitor";
 import { ColorUtils } from "../utils/ColorUtils";
 
@@ -28,6 +29,8 @@ export class AnimationController {
   private performanceMonitor: PerformanceMonitor;
   private timeline: ConstructionTimeline | null = null;
   private goldfishIntro: GoldfishIntro | null = null;
+  private activeFishTransition: FishTransition | null = null;
+  private transitionIndex: number = 0;
 
   private elements: NanoElement[] = [];
   private rafId: number | null = null;
@@ -150,19 +153,54 @@ export class AnimationController {
       {
         onElementStart: (el) => {
           this.events.emit("elementStart", el);
-          // Emit particles towards element target points
-          this.particleSystem.emitForElement(
-            el.targets,
-            el.id,
-            this.colors,
-            this.config.particles.size,
-            this.config.particles.opacity,
-            this.config.particles.speed
-          );
+          // Only emit from screen borders if fishTransition didn't already populate them
+          const activeOnEl = this.particleSystem
+            .getActiveParticles()
+            .filter((p) => p.elementId === el.id).length;
+
+          if (activeOnEl === 0) {
+            this.particleSystem.emitForElement(
+              el.targets,
+              el.id,
+              this.colors,
+              this.config.particles.size,
+              this.config.particles.opacity,
+              this.config.particles.speed
+            );
+          }
         },
         onElementReveal: (el) => {
           this.events.emit("elementReveal", el);
-          this.particleSystem.dissolveParticlesForElement(el.id);
+          // Only dissolve immediately if fish transitions are disabled
+          if (!this.config.animation.fishTransition) {
+            this.particleSystem.dissolveParticlesForElement(el.id);
+          }
+        },
+        onRequestTransition: (fromEl, toEl, onReady) => {
+          if (!this.config.animation.fishTransition || this.isDestroyed) {
+            onReady();
+            return;
+          }
+
+          this.events.emit("elementTransition", fromEl, toEl);
+
+          this.activeFishTransition = new FishTransition(
+            this.particleSystem.pool,
+            fromEl,
+            toEl,
+            {
+              duration: this.config.animation.transitionDuration,
+              speed: this.config.particles.speed,
+              colors: this.colors,
+              onComplete: () => {
+                this.activeFishTransition = null;
+                onReady();
+              },
+            },
+            this.transitionIndex++
+          );
+
+          this.activeFishTransition.start();
         },
         onElementComplete: (el) => {
           this.events.emit("elementComplete", el);
@@ -257,6 +295,11 @@ export class AnimationController {
     // Update particle simulation
     const { activeCount, elementArrivals } = this.particleSystem.update(delta, timestamp);
 
+    // Update active inter-element swimming fish transition
+    if (this.activeFishTransition && this.activeFishTransition.isActive()) {
+      this.activeFishTransition.update(delta, timestamp);
+    }
+
     // Update construction timeline if constructing
     if (this.stateManager.is("constructing") && this.timeline) {
       this.timeline.update(delta, elementArrivals);
@@ -320,6 +363,11 @@ export class AnimationController {
   public skip(): void {
     if (this.isDestroyed) return;
 
+    if (this.activeFishTransition) {
+      this.activeFishTransition.cancel();
+      this.activeFishTransition = null;
+    }
+
     if (this.goldfishIntro) {
       this.goldfishIntro.finish();
     }
@@ -356,6 +404,11 @@ export class AnimationController {
   public destroy(): void {
     if (this.isDestroyed) return;
     this.isDestroyed = true;
+
+    if (this.activeFishTransition) {
+      this.activeFishTransition.cancel();
+      this.activeFishTransition = null;
+    }
 
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);

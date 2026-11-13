@@ -75,6 +75,19 @@ export interface AnimationConfig {
    * Stagger delay between parallel streams in ms
    */
   stagger?: number;
+
+  /**
+   * Whether particles from completed elements assemble into an organic swimming fish formation
+   * and smoothly travel to the next element before scattering onto its target points.
+   * Default: true
+   */
+  fishTransition?: boolean;
+
+  /**
+   * Base duration in ms of the swimming fish transition between consecutive elements.
+   * Default: 750
+   */
+  transitionDuration?: number;
 }
 
 export interface ParticlesConfig {

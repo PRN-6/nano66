@@ -10,10 +10,21 @@ describe("GoldfishIntro Animation", () => {
     for (const pt of GOLDFISH_50_POINTS) {
       expect(typeof pt.u).toBe("number");
       expect(typeof pt.v).toBe("number");
+      expect(typeof pt.w).toBe("number");
       expect(typeof pt.waveWeight).toBe("number");
       expect(typeof pt.color).toBe("string");
       expect(pt.size).toBeGreaterThan(0);
     }
+  });
+
+  it("features bilateral 3D stereoscopic eyes and depth separation", () => {
+    const leftEye = GOLDFISH_50_POINTS.find((pt) => pt.color === "#FFFFFF" && pt.w > 0);
+    const rightEye = GOLDFISH_50_POINTS.find((pt) => pt.color === "#FFFFFF" && pt.w < 0);
+
+    expect(leftEye).toBeDefined();
+    expect(rightEye).toBeDefined();
+    expect(leftEye!.w).toBeGreaterThan(0);
+    expect(rightEye!.w).toBeLessThan(0);
   });
 
   it("spawns 50 particles and moves them during swimming phase", () => {

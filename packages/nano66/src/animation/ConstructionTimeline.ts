@@ -5,6 +5,7 @@ import { VisibilityManager } from "../dom/VisibilityManager";
 export interface TimelineCallbacks {
   onElementStart?: (element: NanoElement) => void;
   onElementReveal?: (element: NanoElement) => void;
+  onRequestTransition?: (from: NanoElement, to: NanoElement, onReady: () => void) => void;
   onElementComplete?: (element: NanoElement) => void;
   onProgress?: (progress: number) => void;
   onAllElementsComplete?: () => void;
@@ -24,6 +25,7 @@ export class ConstructionTimeline {
   private completedElementIds: Set<string> = new Set();
   private timeSinceLastStart: number = 0;
   private isFinished: boolean = false;
+  private isTransitioning: boolean = false;
 
   constructor(
     elements: NanoElement[],
@@ -97,6 +99,23 @@ export class ConstructionTimeline {
       this.revealThreshold,
       (revealedEl) => {
         this.callbacks.onElementReveal?.(revealedEl);
+
+        // In sequential mode with transitions, trigger the fish transition to next element
+        if (
+          this.mode === "sequential" &&
+          this.callbacks.onRequestTransition &&
+          this.currentIndex < this.elements.length &&
+          !this.isTransitioning
+        ) {
+          const nextEl = this.elements[this.currentIndex];
+          if (nextEl) {
+            this.isTransitioning = true;
+            this.callbacks.onRequestTransition(revealedEl, nextEl, () => {
+              this.isTransitioning = false;
+              this.startNextBatch();
+            });
+          }
+        }
       },
       (completedEl) => {
         this.completedElementIds.add(completedEl.id);
@@ -118,9 +137,11 @@ export class ConstructionTimeline {
 
     this.timeSinceLastStart += delta;
 
-    // Check if we should advance to the next element / group
+    // Check if we should advance to the next element / group (when not driven by transitions)
     if (
       this.mode !== "parallel" &&
+      !this.isTransitioning &&
+      !this.callbacks.onRequestTransition &&
       this.currentIndex < this.elements.length &&
       this.timeSinceLastStart >= this.elementDelay
     ) {
@@ -183,6 +204,7 @@ export class ConstructionTimeline {
     this.animators.clear();
     this.timeSinceLastStart = 0;
     this.isFinished = false;
+    this.isTransitioning = false;
 
     for (const el of this.elements) {
       el.state = "pending";

@@ -7,6 +7,7 @@ export interface Nano66EventMap {
   start: () => void;
   elementStart: (element: NanoElement) => void;
   elementReveal: (element: NanoElement) => void;
+  elementTransition: (from: NanoElement, to: NanoElement) => void;
   elementComplete: (element: NanoElement) => void;
   progress: (progress: number) => void;
   complete: () => void;

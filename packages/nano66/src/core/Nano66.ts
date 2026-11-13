@@ -78,6 +78,8 @@ export class Nano66 {
         cursorExit: options.animation?.cursorExit ?? true,
         revealThreshold: options.animation?.revealThreshold ?? 0.8,
         stagger: options.animation?.stagger ?? 50,
+        fishTransition: options.animation?.fishTransition ?? true,
+        transitionDuration: options.animation?.transitionDuration ?? 750,
       },
       particles: {
         count: options.particles?.count ?? recommendedCount,
