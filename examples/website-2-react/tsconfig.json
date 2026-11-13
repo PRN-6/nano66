@@ -2,9 +2,11 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "jsx": "react-jsx",
-    "rootDir": "./src",
-    "outDir": "./dist",
-    "noEmit": true
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "nano66": ["../../packages/nano66/src/index.ts"]
+    }
   },
   "include": ["src/**/*"]
 }

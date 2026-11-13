@@ -63,7 +63,7 @@ export const App: React.FC = () => {
     nano.on("start", () => setStatus("Constructing"));
     nano.on("complete", () => setStatus("Interactive"));
 
-    nano.start().catch((err) => {
+    nano.start().catch((err: unknown) => {
       console.error("[Nano66-React] Initialization failed:", err);
     });
 
