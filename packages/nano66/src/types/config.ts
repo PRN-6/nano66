@@ -18,8 +18,8 @@ export interface IntroConfig {
   enabled?: boolean;
 
   /**
-   * Number of particles forming the goldfish prologue.
-   * Default: 50
+   * Number of particles forming the high-definition 3D goldfish prologue.
+   * Default: 350
    */
   particleCount?: number;
 

@@ -58,6 +58,7 @@ export class AnimationController {
       this.goldfishIntro = new GoldfishIntro(
         this.particleSystem.pool,
         config.intro.duration,
+        config.intro.particleCount ?? 350,
         () => {
           this.events.emit("introScatter");
         },

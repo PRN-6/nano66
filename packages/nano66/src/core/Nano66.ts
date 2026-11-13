@@ -78,7 +78,7 @@ export class Nano66 {
         cursorExit: options.animation?.cursorExit ?? true,
         revealThreshold: options.animation?.revealThreshold ?? 0.8,
         stagger: options.animation?.stagger ?? 50,
-        fishTransition: options.animation?.fishTransition ?? true,
+        fishTransition: options.animation?.fishTransition ?? false,
         transitionDuration: options.animation?.transitionDuration ?? 750,
       },
       particles: {
@@ -102,7 +102,7 @@ export class Nano66 {
       },
       intro: {
         enabled: options.intro?.enabled ?? true,
-        particleCount: options.intro?.particleCount ?? 50,
+        particleCount: options.intro?.particleCount ?? 350,
         duration: options.intro?.duration ?? 2600,
         colors: options.intro?.colors ?? ["#FFB800", "#FF8C00", "#FFA500", "#FFE082", "#FFFFFF"],
       },

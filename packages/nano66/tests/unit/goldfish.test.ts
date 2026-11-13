@@ -1,5 +1,9 @@
 import { describe, it, expect, vi } from "vitest";
-import { GoldfishIntro, GOLDFISH_50_POINTS } from "../../src/animation/GoldfishIntro";
+import {
+  GoldfishIntro,
+  GOLDFISH_50_POINTS,
+  generateHighDensity3DGoldfish,
+} from "../../src/animation/GoldfishIntro";
 import { ParticlePool } from "../../src/particles/ParticlePool";
 
 describe("GoldfishIntro Animation", () => {
@@ -15,6 +19,17 @@ describe("GoldfishIntro Animation", () => {
       expect(typeof pt.color).toBe("string");
       expect(pt.size).toBeGreaterThan(0);
     }
+  });
+
+  it("generates ultra-high-definition 3D volumetric model with 350 particles", () => {
+    const points350 = generateHighDensity3DGoldfish(350);
+    expect(points350.length).toBeGreaterThanOrEqual(300);
+
+    // Verify volumetric thickness
+    const leftPoints = points350.filter((pt) => pt.w > 0.2);
+    const rightPoints = points350.filter((pt) => pt.w < -0.2);
+    expect(leftPoints.length).toBeGreaterThan(30);
+    expect(rightPoints.length).toBeGreaterThan(30);
   });
 
   it("features bilateral 3D stereoscopic eyes and depth separation", () => {
