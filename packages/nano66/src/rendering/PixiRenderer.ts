@@ -139,13 +139,15 @@ export class PixiRenderer implements Renderer {
       }
 
       sprite.visible = true;
-      sprite.x = p.x;
-      sprite.y = p.y;
+      const scrollX = typeof window !== "undefined" ? window.scrollX || 0 : 0;
+      const scrollY = typeof window !== "undefined" ? window.scrollY || 0 : 0;
+      sprite.x = p.x - scrollX;
+      sprite.y = p.y - scrollY;
       // Normalizing based on 32px base texture
       const scale = (p.size * 2) / 32;
       sprite.scale.set(scale);
       sprite.alpha = p.alpha;
-      sprite.tint = p.color;
+      sprite.tint = isNaN(p.color) ? 0xffffff : p.color;
     }
 
     // Hide any unused sprites in pool

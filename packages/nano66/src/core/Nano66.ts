@@ -148,6 +148,7 @@ export class Nano66 {
     }
 
     if (this.isDestroyed) return;
+    if (this.stateManager.is("completed") || this.stateManager.is("paused")) return;
 
     this.controller?.start();
   }
@@ -157,6 +158,7 @@ export class Nano66 {
    */
   public pause(): void {
     if (this.isDestroyed) return;
+    this.stateManager.transitionTo("paused");
     this.controller?.pause();
   }
 
@@ -165,7 +167,11 @@ export class Nano66 {
    */
   public resume(): void {
     if (this.isDestroyed) return;
-    this.controller?.resume();
+    if (this.controller) {
+      this.controller.resume();
+    } else {
+      this.stateManager.transitionTo("constructing");
+    }
   }
 
   /**
@@ -173,7 +179,12 @@ export class Nano66 {
    */
   public skip(): void {
     if (this.isDestroyed) return;
-    this.controller?.skip();
+    this.stateManager.transitionTo("completed");
+    if (this.controller) {
+      this.controller.skip();
+    } else {
+      this.events.emit("complete");
+    }
   }
 
   /**

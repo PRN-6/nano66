@@ -21,12 +21,12 @@ export class ParticlePhysics {
       case "streaming": {
         // Fade in rapidly
         if (p.alpha < p.targetAlpha) {
-          p.alpha = Math.min(p.targetAlpha, p.alpha + 0.04 * dt);
+          p.alpha = Math.min(p.targetAlpha, p.alpha + 0.06 * dt);
         }
 
         // Apply organic curl/flow force
         const flow = MathUtils.flowField(p.x, p.y, globalTime + p.seed * 50);
-        const flowWeight = 0.8 * p.speed;
+        const flowWeight = 1.0 * p.speed;
 
         // Attractive force towards target
         const dx = p.targetX - p.x;
@@ -34,22 +34,22 @@ export class ParticlePhysics {
         const distSq = dx * dx + dy * dy;
         const dist = Math.sqrt(distSq);
 
-        const targetPull = Math.min(0.15 * p.speed, dist * 0.001);
+        const pullSpeed = Math.min(5.0, Math.max(1.2, dist * 0.035)) * p.speed;
         const nx = dist > 0 ? dx / dist : 0;
         const ny = dist > 0 ? dy / dist : 0;
 
-        p.vx += (flow.vx * flowWeight + nx * targetPull * 3.0) * dt;
-        p.vy += (flow.vy * flowWeight + ny * targetPull * 3.0) * dt;
+        p.vx += (flow.vx * flowWeight + nx * pullSpeed) * dt * 0.4;
+        p.vy += (flow.vy * flowWeight + ny * pullSpeed) * dt * 0.4;
 
         // Drag / air resistance
-        p.vx *= 0.94;
-        p.vy *= 0.94;
+        p.vx *= 0.93;
+        p.vy *= 0.93;
 
         p.x += p.vx * dt;
         p.y += p.vy * dt;
 
         // Transition to forming when close to target or after time
-        if (dist < 120 || p.life > 1800) {
+        if (dist < 80 || p.life > 1200) {
           p.state = "forming";
         }
         break;
@@ -66,8 +66,8 @@ export class ParticlePhysics {
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         // Spring attraction to exact target
-        const spring = 0.08 * p.speed;
-        const damping = 0.82;
+        const spring = 0.12 * p.speed;
+        const damping = 0.80;
 
         p.vx += dx * spring * dt;
         p.vy += dy * spring * dt;
@@ -78,10 +78,10 @@ export class ParticlePhysics {
         p.x += p.vx * dt;
         p.y += p.vy * dt;
 
-        if (dist <= p.arrivalDistance) {
+        if (dist <= p.arrivalDistance || dist < 2.0) {
           p.hasArrived = true;
           // Snap tightly
-          if (dist < 0.5) {
+          if (dist < 1.0) {
             p.x = p.targetX;
             p.y = p.targetY;
             p.vx = 0;
@@ -101,6 +101,22 @@ export class ParticlePhysics {
         p.x = p.targetX + jitterX;
         p.y = p.targetY + jitterY;
         p.hasArrived = true;
+        break;
+      }
+
+      case "dissolving": {
+        // Gently fade out into the revealed HTML element
+        p.alpha -= 0.045 * dt;
+        p.size = Math.max(0.1, p.size - 0.02 * dt);
+        const t = (globalTime * 0.003 + p.seed) % (Math.PI * 2);
+        p.x += Math.cos(t) * 0.3 * dt;
+        p.y += Math.sin(t) * 0.3 * dt;
+
+        if (p.alpha <= 0.02) {
+          p.active = false;
+          p.state = "dead";
+          return false;
+        }
         break;
       }
 

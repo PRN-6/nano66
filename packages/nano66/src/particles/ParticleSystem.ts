@@ -46,6 +46,17 @@ export class ParticleSystem {
   }
 
   /**
+   * Fade out particles for an element as its HTML appearance is revealed
+   */
+  public dissolveParticlesForElement(elementId: string): void {
+    for (const p of this.pool.getActiveParticles()) {
+      if (p.elementId === elementId && p.state !== "attracting") {
+        p.dissolve();
+      }
+    }
+  }
+
+  /**
    * Trigger the final cursor attraction phase on all active particles
    */
   public startCursorAttraction(cursorX?: number, cursorY?: number): void {

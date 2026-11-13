@@ -39,6 +39,14 @@ nano.on("start", () => {
   if (statusPill) statusPill.innerText = "Constructing...";
 });
 
+nano.on("pause", () => {
+  if (statusPill) statusPill.innerText = "Paused";
+});
+
+nano.on("resume", () => {
+  if (statusPill) statusPill.innerText = "Constructing...";
+});
+
 nano.on("elementStart", (el) => {
   if (statusPill && nano.getState() === "constructing") {
     statusPill.innerText = `Building ${el.type}...`;

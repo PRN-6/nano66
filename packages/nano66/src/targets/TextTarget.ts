@@ -24,7 +24,7 @@ export class TextTarget {
 
     if (typeof document === "undefined") {
       // In non-browser / mock environment, generate perimeter fallback
-      return this.generateFallbackPoints(rect);
+      return this.generateFallbackPoints(rect, computedStyle.color);
     }
 
     const canvas = document.createElement("canvas");
@@ -35,7 +35,7 @@ export class TextTarget {
 
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
     if (!ctx) {
-      return this.generateFallbackPoints(rect);
+      return this.generateFallbackPoints(rect, computedStyle.color);
     }
 
     const fontSize = parseFloat(computedStyle.fontSize) || 24;
@@ -107,14 +107,14 @@ export class TextTarget {
       }
     }
 
-    return points.length > 0 ? points : this.generateFallbackPoints(rect);
+    return points.length > 0 ? points : this.generateFallbackPoints(rect, computedStyle.color);
   }
 
-  private static generateFallbackPoints(rect: DOMRect): Point[] {
+  private static generateFallbackPoints(rect: DOMRect, color: string = "#ffffff"): Point[] {
     const points: Point[] = [];
     const step = 8;
     for (let x = rect.left; x <= rect.right; x += step) {
-      points.push({ x, y: rect.top + rect.height / 2 });
+      points.push({ x, y: rect.top + rect.height / 2, color });
     }
     return points;
   }

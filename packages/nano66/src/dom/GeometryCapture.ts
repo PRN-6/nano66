@@ -55,8 +55,23 @@ export class GeometryCapture {
       rect.top <= windowHeight &&
       rect.left <= windowWidth;
 
+    const scrollX = typeof window !== "undefined" ? window.scrollX || 0 : 0;
+    const scrollY = typeof window !== "undefined" ? window.scrollY || 0 : 0;
+
+    const docRect = {
+      left: rect.left + scrollX,
+      top: rect.top + scrollY,
+      right: rect.right + scrollX,
+      bottom: rect.bottom + scrollY,
+      width: rect.width,
+      height: rect.height,
+      x: (rect.x !== undefined ? rect.x : rect.left) + scrollX,
+      y: (rect.y !== undefined ? rect.y : rect.top) + scrollY,
+      toJSON: () => {},
+    } as DOMRect;
+
     return {
-      rect,
+      rect: docRect,
       computedStyle: {
         color: style.color || "#ffffff",
         backgroundColor: style.backgroundColor || "transparent",

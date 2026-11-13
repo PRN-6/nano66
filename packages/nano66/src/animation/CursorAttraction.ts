@@ -5,8 +5,10 @@ export class CursorAttraction {
   private isListening: boolean = false;
 
   constructor() {
-    this.cursorX = typeof window !== "undefined" ? window.innerWidth / 2 : 500;
-    this.cursorY = typeof window !== "undefined" ? window.innerHeight / 2 : 500;
+    const scrollX = typeof window !== "undefined" ? window.scrollX || 0 : 0;
+    const scrollY = typeof window !== "undefined" ? window.scrollY || 0 : 0;
+    this.cursorX = typeof window !== "undefined" ? window.innerWidth / 2 + scrollX : 500;
+    this.cursorY = typeof window !== "undefined" ? window.innerHeight / 2 + scrollY : 500;
   }
 
   public startListening(): void {
@@ -19,16 +21,20 @@ export class CursorAttraction {
   }
 
   private handleMouseMove = (e: MouseEvent | PointerEvent): void => {
-    this.cursorX = e.clientX;
-    this.cursorY = e.clientY;
+    const scrollX = typeof window !== "undefined" ? window.scrollX || 0 : 0;
+    const scrollY = typeof window !== "undefined" ? window.scrollY || 0 : 0;
+    this.cursorX = e.clientX + scrollX;
+    this.cursorY = e.clientY + scrollY;
     this.hasCursorMoved = true;
   };
 
   private handleTouchMove = (e: TouchEvent): void => {
     const touch = e.touches[0];
     if (touch) {
-      this.cursorX = touch.clientX;
-      this.cursorY = touch.clientY;
+      const scrollX = typeof window !== "undefined" ? window.scrollX || 0 : 0;
+      const scrollY = typeof window !== "undefined" ? window.scrollY || 0 : 0;
+      this.cursorX = touch.clientX + scrollX;
+      this.cursorY = touch.clientY + scrollY;
       this.hasCursorMoved = true;
     }
   };

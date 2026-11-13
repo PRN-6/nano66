@@ -21,7 +21,8 @@ export class TargetGenerator {
       }
 
       case "button": {
-        const text = element.innerText || element.textContent || "";
+        const text =
+          element.innerText || element.textContent || (element as HTMLInputElement).value || "";
         const shapePoints = ShapeTarget.generate(
           rect,
           borderRadius || 6,
@@ -40,18 +41,23 @@ export class TargetGenerator {
       }
 
       case "card": {
-        return ShapeTarget.generate(
+        const shapePoints = ShapeTarget.generate(
           rect,
           borderRadius || 12,
           false,
           densityStep * 2.0,
           computedStyle.borderColor !== "transparent" ? computedStyle.borderColor : "#ffffff"
         );
+        const cardText = element.innerText || element.textContent || "";
+        const textPoints = cardText.trim()
+          ? TextTarget.generate(cardText, rect, computedStyle, densityStep * 1.5)
+          : [];
+        return [...shapePoints, ...textPoints];
       }
 
       case "navigation": {
         const text = element.innerText || element.textContent || "";
-        if (text.trim().length > 0 && text.trim().length < 100) {
+        if (text.trim().length > 0) {
           return TextTarget.generate(text, rect, computedStyle, densityStep);
         }
         return ShapeTarget.generate(rect, 4, false, densityStep * 2);

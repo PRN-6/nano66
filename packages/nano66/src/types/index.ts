@@ -63,5 +63,6 @@ export type ParticleState =
   | "streaming"
   | "forming"
   | "settled"
+  | "dissolving"
   | "attracting"
   | "dead";

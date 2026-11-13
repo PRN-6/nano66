@@ -78,10 +78,21 @@ export class AnimationController {
       this.colors = [ColorUtils.toHexNumber(this.config.particles.color)];
     }
 
-    // 2. Scan DOM elements
+    // 2. Wait for fonts if available so canvas text glyphs match web fonts perfectly
+    if (typeof document !== "undefined" && (document as any).fonts) {
+      try {
+        await (document as any).fonts.ready;
+      } catch {
+        // Proceed if font loading promise fails
+      }
+    }
+
+    if (this.isDestroyed) return;
+
+    // 3. Scan DOM elements
     this.elements = this.domScanner.scan();
 
-    // 3. Generate target points for all detected elements
+    // 4. Generate target points for all detected elements
     for (const el of this.elements) {
       el.targets = TargetGenerator.generateTargetsForElement(el);
     }
@@ -104,6 +115,11 @@ export class AnimationController {
     this.particleSystem.updateDimensions(dims.width, dims.height);
 
     // 5. Initial blank website state: Conceal content without layout shift
+    if (this.stateManager.is("completed")) {
+      this.visibilityManager.revealAll();
+      return;
+    }
+
     this.stateManager.transitionTo("concealing");
     for (const el of this.elements) {
       this.visibilityManager.conceal(el.element);
@@ -129,8 +145,9 @@ export class AnimationController {
             this.config.particles.speed
           );
         },
-        onElementReveal: (_el) => {
-          // Element reached threshold
+        onElementReveal: (el) => {
+          this.events.emit("elementReveal", el);
+          this.particleSystem.dissolveParticlesForElement(el.id);
         },
         onElementComplete: (el) => {
           this.events.emit("elementComplete", el);
@@ -149,6 +166,9 @@ export class AnimationController {
   }
 
   public start(): void {
+    if (this.stateManager.is("paused")) {
+      return;
+    }
     if (!this.stateManager.is("ready") && !this.stateManager.is("idle")) {
       return;
     }
@@ -218,7 +238,11 @@ export class AnimationController {
     );
   }
 
-  private complete(): void {
+  public complete(): void {
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
+    }
     this.stateManager.transitionTo("completed");
     this.cursorAttraction.stopListening();
     this.visibilityManager.revealAll();
@@ -227,8 +251,7 @@ export class AnimationController {
   }
 
   public pause(): void {
-    if (!this.stateManager.isRunning()) return;
-
+    if (this.isDestroyed) return;
     if (this.rafId !== null) {
       cancelAnimationFrame(this.rafId);
       this.rafId = null;
@@ -239,6 +262,7 @@ export class AnimationController {
   }
 
   public resume(): void {
+    if (this.isDestroyed) return;
     if (!this.stateManager.is("paused")) return;
 
     const previous = this.stateManager.getPreviousState();
@@ -250,8 +274,11 @@ export class AnimationController {
   }
 
   public skip(): void {
-    if (this.stateManager.is("completed") || this.stateManager.is("destroyed")) {
-      return;
+    if (this.isDestroyed) return;
+
+    if (this.rafId !== null) {
+      cancelAnimationFrame(this.rafId);
+      this.rafId = null;
     }
 
     if (this.timeline) {
@@ -259,6 +286,7 @@ export class AnimationController {
     }
 
     this.particleSystem.reset();
+    this.visibilityManager.revealAll();
     this.complete();
   }
 

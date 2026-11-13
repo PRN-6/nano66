@@ -44,6 +44,9 @@ test.describe("Website 1 — Vanilla Integration", () => {
     const pauseBtn = page.locator("#btn-pause");
     const statusPill = page.locator("#status-pill");
 
+    // Wait until animation is in progress
+    await expect(statusPill).toHaveText(/Building|Constructing/);
+
     // Click pause
     await pauseBtn.click();
     await expect(statusPill).toHaveText("Paused");

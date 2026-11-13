@@ -118,4 +118,10 @@ export class Particle {
     this.targetX = cursorX;
     this.targetY = cursorY;
   }
+
+  public dissolve(): void {
+    if (this.state !== "attracting") {
+      this.state = "dissolving";
+    }
+  }
 }

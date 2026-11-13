@@ -1,5 +1,6 @@
 import { ParticlePool } from "./ParticlePool";
 import { PRNG } from "../utils/MathUtils";
+import { ColorUtils } from "../utils/ColorUtils";
 import type { Point } from "../types";
 
 export class ParticleEmitter {
@@ -72,10 +73,17 @@ export class ParticleEmitter {
       if (!particle) break;
 
       const origin = this.getSpawnOrigin(target.x, target.y);
-      const color =
-        target.color !== undefined
-          ? parseInt(target.color.replace("#", "0x"), 16)
-          : (colors[this.prng.rangeInt(0, colors.length - 1)] ?? 0xffffff);
+      let color = colors[this.prng.rangeInt(0, colors.length - 1)] ?? 0xffffff;
+      if (target.color !== undefined) {
+        const parsed = ColorUtils.parseColor(target.color);
+        if (parsed.a > 0.05) {
+          const lum = ColorUtils.getLuminance(parsed);
+          // If color is not excessively dark (< 0.12 luminance), use it; otherwise use vibrant palette
+          if (lum > 0.12) {
+            color = ColorUtils.toHexNumber(parsed);
+          }
+        }
+      }
       const size = target.size ?? this.prng.range(sizeRange[0], sizeRange[1]);
       const alpha = target.alpha ?? this.prng.range(opacityRange[0], opacityRange[1]);
       const pSpeed = speed * this.prng.range(0.85, 1.25);

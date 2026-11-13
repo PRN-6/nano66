@@ -37,11 +37,15 @@ export class CanvasFallbackRenderer implements Renderer {
       if (!p || !p.active || p.alpha <= 0.01) continue;
 
       this.ctx.globalAlpha = p.alpha;
-      const hex = p.color.toString(16).padStart(6, "0");
+      const colorNum = isNaN(p.color) ? 0xffffff : p.color;
+      const hex = colorNum.toString(16).padStart(6, "0");
       this.ctx.fillStyle = `#${hex}`;
 
+      const scrollX = typeof window !== "undefined" ? window.scrollX || 0 : 0;
+      const scrollY = typeof window !== "undefined" ? window.scrollY || 0 : 0;
+
       this.ctx.beginPath();
-      this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+      this.ctx.arc(p.x - scrollX, p.y - scrollY, p.size, 0, Math.PI * 2);
       this.ctx.fill();
     }
 

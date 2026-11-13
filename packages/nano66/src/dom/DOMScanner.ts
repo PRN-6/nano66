@@ -24,14 +24,24 @@ export class DOMScanner {
       "button",
       "a.btn",
       "a.button",
-      "header nav",
-      "nav",
+      "nav a",
+      "header a",
       "img",
+      "picture",
       "svg",
       ".card",
       "[data-nano-card]",
+      "[class*='card']",
       "article",
-      "footer",
+      "input",
+      "textarea",
+      "select",
+      ".hero-pill",
+      "[class*='pill']",
+      "[class*='badge']",
+      "[class*='tag']",
+      "[class*='brand']",
+      "[class*='logo']",
     ].join(", ");
 
     const rawElements = Array.from(this.target.querySelectorAll<HTMLElement>(selector));
@@ -52,14 +62,15 @@ export class DOMScanner {
         continue;
       }
 
-      // Avoid duplicate nested text if parent heading/card is already picked
-      // If el is a child of another candidate and has no explicit order, evaluate appropriateness
       const geometry = GeometryCapture.capture(el);
       if (!geometry) continue;
 
       const type = ElementDetector.detectType(el);
       const order = ElementDetector.getPriority(el, type);
-      const group = el.getAttribute("data-nano-group") || "default";
+      const group =
+        el.getAttribute("data-nano-group") ||
+        el.closest("[data-nano-group]")?.getAttribute("data-nano-group") ||
+        "default";
 
       detected.push({
         id: `nano-el-${idCounter++}`,
@@ -74,14 +85,28 @@ export class DOMScanner {
       });
     }
 
+    // Filter out layout wrappers (containers that contain other detected elements)
+    // so hollow wireframe rectangles aren't drawn around sections, headers, and grids.
+    const filtered = detected.filter((item) => {
+      if (item.type === "container") {
+        const containsOther = detected.some(
+          (other) => other !== item && item.element.contains(other.element)
+        );
+        if (containsOther) {
+          return false;
+        }
+      }
+      return true;
+    });
+
     // Sort by order ascending, then by vertical screen position top-to-bottom
-    detected.sort((a, b) => {
+    filtered.sort((a, b) => {
       if (a.order !== b.order) {
         return a.order - b.order;
       }
       return a.rect.top - b.rect.top || a.rect.left - b.rect.left;
     });
 
-    return detected;
+    return filtered;
   }
 }
