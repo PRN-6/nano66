@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Alex Rivers — Principal Creative Technologist</title>
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Nano66 Live Control Bar (Ignored by engine) -->
+  <aside class="nano-controls" data-nano-ignore aria-label="Nano66 Animation Controls">
+    <div class="nano-badge">
+      <span class="pulse-dot"></span>
+      <span class="engine-name">Nano66</span>
+      <span id="status-pill" class="status-pill">Constructing...</span>
+    </div>
+    <div class="nano-buttons">
+      <button id="btn-restart" class="ctrl-btn" title="Restart animation">↺ Restart</button>
+      <button id="btn-pause" class="ctrl-btn" title="Pause or Resume">⏸ Pause</button>
+      <button id="btn-skip" class="ctrl-btn" title="Skip animation">⏭ Skip</button>
+      <button id="btn-theme" class="ctrl-btn" title="Toggle Theme">🌓 Theme</button>
+    </div>
+  </aside>
+
+  <!-- Website Container -->
+  <div id="page-wrapper" class="page-wrapper">
+    <!-- 1. Header / Navigation -->
+    <header class="site-header" data-nano-order="1" data-nano-group="nav">
+      <div class="container nav-container">
+        <a href="#hero" class="brand-logo" data-nano-order="2">
+          <span class="logo-mark">▲</span>
+          <span class="logo-text">ALEX.RIVERS</span>
+        </a>
+        <nav class="nav-links">
+          <a href="#about">About</a>
+          <a href="#skills">Skills</a>
+          <a href="#projects">Projects</a>
+          <a href="#contact" class="nav-cta">Let's Talk</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- 2. Hero Section -->
+      <section id="hero" class="hero-section">
+        <div class="container hero-grid">
+          <div class="hero-copy">
+            <span class="hero-eyebrow" data-nano-order="2">CREATIVE TECHNOLOGIST &amp; ARCHITECT</span>
+            <h1 class="hero-title" data-nano-order="3">
+              Crafting digital reality from microscopic pixels.
+            </h1>
+            <p class="hero-desc" data-nano-order="4">
+              Building next-generation web applications, high-performance GPU engines, and interactive digital experiences with obsessive precision and craft.
+            </p>
+            <div class="hero-actions" data-nano-order="5">
+              <a href="#projects" class="btn btn-primary">Explore Selected Works</a>
+              <a href="#contact" class="btn btn-secondary">Get In Touch</a>
+            </div>
+          </div>
+          <div class="hero-visual" data-nano-order="6">
+            <div class="avatar-card">
+              <img src="/profile.svg" alt="Alex Rivers Profile" class="avatar-img" />
+              <div class="status-tag">
+                <span class="status-indicator"></span> Available for Select Projects
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. About Section -->
+      <section id="about" class="about-section">
+        <div class="container">
+          <div class="section-header" data-nano-order="7">
+            <span class="section-tag">PHILOSOPHY</span>
+            <h2 class="section-title">The intersection of code and aesthetics.</h2>
+          </div>
+          <div class="about-body" data-nano-order="7">
+            <p class="lead-text">
+              Every digital interface tells a story. Over the past decade, I have focused on closing the gap between computational power and poetic interactivity.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Skills Section -->
+      <section id="skills" class="skills-section">
+        <div class="container">
+          <div class="section-header" data-nano-order="8">
+            <span class="section-tag">CAPABILITIES</span>
+            <h2 class="section-title">Engineering Core</h2>
+          </div>
+          <div class="skills-grid" data-nano-order="8">
+            <div class="skill-card">
+              <div class="skill-icon">⚡</div>
+              <h3>GPU &amp; WebGL</h3>
+              <p>PixiJS, Three.js, shaders, particle simulations, high-framerate creative coding.</p>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon">◈</div>
+              <h3>Systems Architecture</h3>
+              <p>TypeScript, scalable monorepos, micro-frontends, high-throughput frontend pipelines.</p>
+            </div>
+            <div class="skill-card">
+              <div class="skill-icon">⚙</div>
+              <h3>Performance</h3>
+              <p>Zero-allocation loops, object pooling, 60fps animations, memory lifecycle auditing.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. Projects Section -->
+      <section id="projects" class="projects-section">
+        <div class="container">
+          <div class="section-header" data-nano-order="9">
+            <span class="section-tag">PORTFOLIO</span>
+            <h2 class="section-title">Featured Creations</h2>
+          </div>
+          <div class="projects-grid" data-nano-order="9">
+            <!-- Project Card 1 -->
+            <article class="project-card card" data-nano-card>
+              <div class="card-meta">01 / GRAPHICS ENGINE</div>
+              <h3 class="card-title">Aether Simulation</h3>
+              <p class="card-desc">Real-time fluid dynamics and particle physics engine built with WebGL and compute shaders.</p>
+              <div class="card-tags">
+                <span>WebGL</span>
+                <span>TypeScript</span>
+                <span>GLSL</span>
+              </div>
+            </article>
+
+            <!-- Project Card 2 -->
+            <article class="project-card card" data-nano-card>
+              <div class="card-meta">02 / INTERACTION DESIGN</div>
+              <h3 class="card-title">Quantum Interface</h3>
+              <p class="card-desc">Kinetic UI design system delivering sub-millisecond visual feedback for spatial audio workstations.</p>
+              <div class="card-tags">
+                <span>PixiJS</span>
+                <span>GSAP</span>
+                <span>AudioWorklet</span>
+              </div>
+            </article>
+
+            <!-- Project Card 3 -->
+            <article class="project-card card" data-nano-card>
+              <div class="card-meta">03 / CREATIVE TOOLING</div>
+              <h3 class="card-title">Voxel Craft Engine</h3>
+              <p class="card-desc">Browser-based procedural landscape generator running seamlessly at 60 FPS across mobile and desktop.</p>
+              <div class="card-tags">
+                <span>WebAssembly</span>
+                <span>Three.js</span>
+                <span>Vite</span>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. Contact Section -->
+      <section id="contact" class="contact-section">
+        <div class="container contact-box" data-nano-order="10">
+          <h2 class="contact-title">Let's build the future together.</h2>
+          <p class="contact-desc">Currently accepting select architectural advisory roles and creative technology commissions.</p>
+          <a href="mailto:alex@example.com" class="btn btn-primary">Start a Conversation</a>
+        </div>
+      </section>
+    </main>
+
+    <!-- 7. Footer -->
+    <footer class="site-footer" data-nano-order="11">
+      <div class="container footer-content">
+        <p>&copy; 2026 Alex Rivers. All rights reserved.</p>
+        <p class="footer-credit">Constructed atom by atom with <strong style="color: var(--primary);">Nano66</strong>.</p>
+      </div>
+    </footer>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

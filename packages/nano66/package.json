@@ -1,0 +1,65 @@
+{
+  "name": "nano66",
+  "version": "1.0.0",
+  "description": "Every website. Built from particles. Production-grade DOM-aware website construction animation engine.",
+  "type": "module",
+  "main": "./dist/nano66.cjs",
+  "module": "./dist/nano66.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/nano66.js"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/nano66.cjs"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "dev": "vite build --watch",
+    "build": "vite build && tsc --emitDeclarationOnly",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit",
+    "pack:check": "npm pack --dry-run"
+  },
+  "keywords": [
+    "particle",
+    "animation",
+    "webgl",
+    "pixijs",
+    "gsap",
+    "dom",
+    "creative-coding",
+    "website-reveal",
+    "cinematic",
+    "canvas"
+  ],
+  "author": "Nano66 Team",
+  "license": "MIT",
+  "dependencies": {
+    "gsap": "^3.12.5",
+    "pixi.js": "^8.6.6"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "happy-dom": "^15.11.7",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.3",
+    "vite-plugin-dts": "^4.4.0",
+    "vitest": "^2.1.8"
+  },
+  "peerDependencies": {},
+  "publishConfig": {
+    "access": "public"
+  }
+}

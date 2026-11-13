@@ -1,0 +1,148 @@
+import { Particle } from "./Particle";
+import { MathUtils } from "../utils/MathUtils";
+
+export class ParticlePhysics {
+  /**
+   * Update physics for a single particle over delta ms
+   */
+  public static update(
+    p: Particle,
+    delta: number,
+    globalTime: number,
+    cursorX: number = 0,
+    cursorY: number = 0
+  ): boolean {
+    if (!p.active) return false;
+
+    p.life += delta;
+    const dt = Math.min(delta / 16.67, 2.0); // Normalized time step (1.0 = ~60fps)
+
+    switch (p.state) {
+      case "streaming": {
+        // Fade in rapidly
+        if (p.alpha < p.targetAlpha) {
+          p.alpha = Math.min(p.targetAlpha, p.alpha + 0.04 * dt);
+        }
+
+        // Apply organic curl/flow force
+        const flow = MathUtils.flowField(p.x, p.y, globalTime + p.seed * 50);
+        const flowWeight = 0.8 * p.speed;
+
+        // Attractive force towards target
+        const dx = p.targetX - p.x;
+        const dy = p.targetY - p.y;
+        const distSq = dx * dx + dy * dy;
+        const dist = Math.sqrt(distSq);
+
+        const targetPull = Math.min(0.15 * p.speed, dist * 0.001);
+        const nx = dist > 0 ? dx / dist : 0;
+        const ny = dist > 0 ? dy / dist : 0;
+
+        p.vx += (flow.vx * flowWeight + nx * targetPull * 3.0) * dt;
+        p.vy += (flow.vy * flowWeight + ny * targetPull * 3.0) * dt;
+
+        // Drag / air resistance
+        p.vx *= 0.94;
+        p.vy *= 0.94;
+
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+
+        // Transition to forming when close to target or after time
+        if (dist < 120 || p.life > 1800) {
+          p.state = "forming";
+        }
+        break;
+      }
+
+      case "forming": {
+        // Fade in to target alpha
+        if (p.alpha < p.targetAlpha) {
+          p.alpha = Math.min(p.targetAlpha, p.alpha + 0.08 * dt);
+        }
+
+        const dx = p.targetX - p.x;
+        const dy = p.targetY - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // Spring attraction to exact target
+        const spring = 0.08 * p.speed;
+        const damping = 0.82;
+
+        p.vx += dx * spring * dt;
+        p.vy += dy * spring * dt;
+
+        p.vx *= damping;
+        p.vy *= damping;
+
+        p.x += p.vx * dt;
+        p.y += p.vy * dt;
+
+        if (dist <= p.arrivalDistance) {
+          p.hasArrived = true;
+          // Snap tightly
+          if (dist < 0.5) {
+            p.x = p.targetX;
+            p.y = p.targetY;
+            p.vx = 0;
+            p.vy = 0;
+            p.state = "settled";
+          }
+        }
+        break;
+      }
+
+      case "settled": {
+        // Microscopic breathing / subtle life jitter
+        const t = (globalTime * 0.002 + p.seed) % (Math.PI * 2);
+        const jitterX = Math.cos(t) * 0.25;
+        const jitterY = Math.sin(t) * 0.25;
+
+        p.x = p.targetX + jitterX;
+        p.y = p.targetY + jitterY;
+        p.hasArrived = true;
+        break;
+      }
+
+      case "attracting": {
+        // Converge toward cursor
+        const dx = cursorX - p.x;
+        const dy = cursorY - p.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 10 || p.alpha < 0.02 || p.size < 0.3) {
+          p.active = false;
+          p.state = "dead";
+          return false; // Particle consumed by cursor
+        }
+
+        // Swirling vortex physics toward cursor
+        const normalX = dx / dist;
+        const normalY = dy / dist;
+        const tangentX = -normalY;
+        const tangentY = normalX;
+
+        // Combine attraction + orbital swirl
+        const pullSpeed = Math.min(12, Math.max(3, dist * 0.08)) * p.speed;
+        const swirlStrength = Math.min(5, 80 / (dist + 10));
+
+        p.vx = (normalX * pullSpeed + tangentX * swirlStrength) * dt;
+        p.vy = (normalY * pullSpeed + tangentY * swirlStrength) * dt;
+
+        p.x += p.vx;
+        p.y += p.vy;
+
+        // Shrink and fade
+        p.size = Math.max(0.1, p.size - 0.04 * dt);
+        p.alpha = Math.max(0, p.alpha - 0.025 * dt);
+        break;
+      }
+
+      case "dead": {
+        return false;
+      }
+    }
+
+    return true;
+  }
+}
