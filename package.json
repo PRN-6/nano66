@@ -11,6 +11,8 @@
     "test:e2e": "playwright test",
     "dev:vanilla": "pnpm --filter website-1-vanilla dev",
     "dev:react": "pnpm --filter website-2-react dev",
+    "dev:docs": "pnpm --filter nano66-docs dev",
+    "build:docs": "pnpm --filter nano66-docs build",
     "lint": "eslint packages/nano66/src",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,html,css}\"",
     "pack:check": "pnpm --filter nano66 pack:check"

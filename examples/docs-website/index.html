@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nano66 Documentation &amp; Live Playground</title>
+  <link rel="stylesheet" href="/src/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Header -->
+  <header class="docs-header" data-nano-ignore>
+    <div class="header-container">
+      <a href="#hero" class="brand">
+        <span>Nano66</span>
+        <span class="brand-badge">v1.0.0</span>
+      </a>
+      <div class="header-actions">
+        <button id="theme-toggle" class="btn-theme" title="Toggle theme">🌓 Theme</button>
+        <a href="https://github.com/nano66/nano66" target="_blank" rel="noreferrer" class="btn-theme">GitHub</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Docs Layout -->
+  <div class="docs-layout">
+    <!-- Sidebar Navigation -->
+    <aside class="docs-sidebar" data-nano-ignore>
+      <div class="nav-group">
+        <div class="nav-group-title">Overview</div>
+        <a href="#playground" class="nav-item">Live Playground</a>
+        <a href="#introduction" class="nav-item">Introduction</a>
+        <a href="#installation" class="nav-item">Installation</a>
+        <a href="#quickstart" class="nav-item">Quick Start</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title">Configuration</div>
+        <a href="#configuration" class="nav-item">Options Reference</a>
+        <a href="#html-attributes" class="nav-item">HTML Data Attributes</a>
+        <a href="#performance" class="nav-item">Performance Presets</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title">API &amp; Frameworks</div>
+        <a href="#api" class="nav-item">Public API</a>
+        <a href="#events" class="nav-item">Lifecycle Events</a>
+        <a href="#integrations" class="nav-item">Framework Guides</a>
+      </div>
+      <div class="nav-group">
+        <div class="nav-group-title">Engineering</div>
+        <a href="#compatibility" class="nav-item">Browser Support</a>
+        <a href="#troubleshooting" class="nav-item">Troubleshooting</a>
+        <a href="#contributing" class="nav-item">Contributing</a>
+      </div>
+    </aside>
+
+    <!-- Main Content Container -->
+    <main id="docs-main" class="docs-content">
+      <!-- 1. Hero -->
+      <section id="hero" class="docs-hero" data-nano-order="1">
+        <div class="hero-tagline">WEB ANIMATION ENGINE</div>
+        <h1 class="docs-title">Every website.<br />Built from particles.</h1>
+        <p class="docs-lead">
+          Nano66 is a production-quality, framework-agnostic DOM-aware website construction animation engine.
+          It assembles your real website element by element using millions of microscopic GPU particles,
+          then absorbs remaining dust into the visitor's cursor.
+        </p>
+      </section>
+
+      <!-- 2. Live Interactive Playground -->
+      <section id="playground" class="playground-box" data-nano-ignore>
+        <div class="playground-header">
+          <div>
+            <h3 class="playground-title">Live Engine Playground</h3>
+            <span style="font-size: 0.8rem; color: var(--text-muted);">Adjust parameters and restart the live animation</span>
+          </div>
+          <span id="engine-status" class="brand-badge" style="color: #10b981;">Ready</span>
+        </div>
+
+        <div class="playground-grid">
+          <div class="control-field">
+            <label>Particle Count: <span id="val-count">4000</span></label>
+            <input id="slider-count" type="range" min="500" max="10000" step="500" value="4000" />
+          </div>
+
+          <div class="control-field">
+            <label>Particle Size: <span id="val-size">2.0px</span></label>
+            <input id="slider-size" type="range" min="1.0" max="4.0" step="0.2" value="2.0" />
+          </div>
+
+          <div class="control-field">
+            <label>Animation Speed: <span id="val-speed">1.2x</span></label>
+            <input id="slider-speed" type="range" min="0.5" max="3.0" step="0.1" value="1.2" />
+          </div>
+
+          <div class="control-field">
+            <label>Construction Mode</label>
+            <select id="select-mode">
+              <option value="sequential">Sequential</option>
+              <option value="grouped">Grouped</option>
+              <option value="parallel">Parallel</option>
+            </select>
+          </div>
+
+          <div class="control-field">
+            <label>Theme Detection</label>
+            <select id="select-theme">
+              <option value="auto">Auto (Detects Luminance)</option>
+              <option value="dark">Dark Theme</option>
+              <option value="light">Light Theme</option>
+            </select>
+          </div>
+
+          <div class="control-field">
+            <label>Particle Color</label>
+            <select id="select-color">
+              <option value="auto">Auto (Theme Palette)</option>
+              <option value="#38bdf8">Electric Sky (#38bdf8)</option>
+              <option value="#10b981">Cyber Emerald (#10b981)</option>
+              <option value="#f59e0b">Amber Glow (#f59e0b)</option>
+              <option value="#ec4899">Neon Pink (#ec4899)</option>
+              <option value="#ffffff">Pure White (#ffffff)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="playground-actions">
+          <button id="btn-apply-restart" class="action-btn">↺ Restart with Settings</button>
+          <button id="btn-pause-resume" class="action-btn secondary">⏸ Pause</button>
+          <button id="btn-skip-anim" class="action-btn secondary">⏭ Skip</button>
+        </div>
+      </section>
+
+      <!-- 3. Introduction -->
+      <section id="introduction" class="doc-section" data-nano-order="2">
+        <h2>Core Philosophy</h2>
+        <p>
+          Unlike conventional particle background effects or 3D canvas canvases, <strong>Nano66 is DOM-aware</strong>.
+          It does not replace your website with a pre-rendered 3D scene.
+          Instead, it captures the positions, computed typography, borders, and silhouettes of your real DOM elements,
+          conceals them without triggering layout shifts, constructs each element from microscopic particles,
+          and seamlessly reveals your authentic HTML elements into an interactive state.
+        </p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h4>GPU Accelerated</h4>
+            <p>Built on PixiJS v8 with batched sprite rendering and Canvas 2D fallback.</p>
+          </div>
+          <div class="feature-card">
+            <h4>True Glyph Rasterization</h4>
+            <p>Letter-exact particle targets generated directly from font shapes via Canvas 2D masks.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Zero-Allocation Object Pool</h4>
+            <p>Pre-allocated buffers eliminate garbage collection pauses during 60 FPS animation.</p>
+          </div>
+          <div class="feature-card">
+            <h4>Framework Independent</h4>
+            <p>Compatible with React, Next.js, Vue, Nuxt, Svelte, Angular, and Vanilla JavaScript.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. Installation -->
+      <section id="installation" class="doc-section" data-nano-order="3">
+        <h2>Installation</h2>
+        <p>Install Nano66 using your preferred package manager:</p>
+        <pre><code># npm
+npm install nano66
+
+# pnpm
+pnpm add nano66
+
+# yarn
+yarn add nano66</code></pre>
+      </section>
+
+      <!-- 5. Quick Start -->
+      <section id="quickstart" class="doc-section" data-nano-order="4">
+        <h2>Quick Start</h2>
+        <p>Add Nano66 to your application with minimal boilerplate:</p>
+        <pre><code>import { Nano66 } from "nano66";
+
+// Initialize the engine
+const nano = new Nano66({
+  target: "body",
+  theme: "auto",
+  animation: {
+    mode: "sequential",
+    cursorExit: true,
+  },
+  particles: {
+    count: 4000,
+    glow: true,
+  },
+});
+
+// Start construction animation
+nano.start();</code></pre>
+      </section>
+
+      <!-- 6. Configuration -->
+      <section id="configuration" class="doc-section" data-nano-order="5">
+        <h2>Configuration Reference</h2>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Option</th>
+              <th>Type</th>
+              <th>Default</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>target</code></td>
+              <td>string | HTMLElement</td>
+              <td><code>"body"</code></td>
+              <td>Target DOM container to scan and animate.</td>
+            </tr>
+            <tr>
+              <td><code>animation.mode</code></td>
+              <td>"sequential" | "grouped" | "parallel"</td>
+              <td><code>"sequential"</code></td>
+              <td>Construction sequencing mode.</td>
+            </tr>
+            <tr>
+              <td><code>animation.elementDelay</code></td>
+              <td>number</td>
+              <td><code>250</code></td>
+              <td>Delay between sequential element starts in milliseconds.</td>
+            </tr>
+            <tr>
+              <td><code>animation.cursorExit</code></td>
+              <td>boolean</td>
+              <td><code>true</code></td>
+              <td>Attract remaining dust particles into mouse cursor upon completion.</td>
+            </tr>
+            <tr>
+              <td><code>animation.revealThreshold</code></td>
+              <td>number (0.1 - 1.0)</td>
+              <td><code>0.8</code></td>
+              <td>Percentage of arrived particles before revealing the original DOM element.</td>
+            </tr>
+            <tr>
+              <td><code>particles.count</code></td>
+              <td>number</td>
+              <td><code>4000</code></td>
+              <td>Total number of active particles. Auto-scaled by preset if omitted.</td>
+            </tr>
+            <tr>
+              <td><code>particles.size</code></td>
+              <td>number | [min, max]</td>
+              <td><code>[1.2, 2.8]</code></td>
+              <td>Particle radius in CSS pixels.</td>
+            </tr>
+            <tr>
+              <td><code>particles.color</code></td>
+              <td>string | string[] | "auto"</td>
+              <td><code>"auto"</code></td>
+              <td>Particle color palette. Automatically adapts to dark/light theme when auto.</td>
+            </tr>
+            <tr>
+              <td><code>particles.glow</code></td>
+              <td>boolean</td>
+              <td><code>true</code></td>
+              <td>Enables additive blending mode for luminous glowing particles.</td>
+            </tr>
+            <tr>
+              <td><code>performance.preset</code></td>
+              <td>"low" | "balanced" | "ultra"</td>
+              <td><code>"balanced"</code></td>
+              <td>Performance tier tuning particle densities for target hardware.</td>
+            </tr>
+            <tr>
+              <td><code>accessibility.respectReducedMotion</code></td>
+              <td>boolean</td>
+              <td><code>true</code></td>
+              <td>Respects OS prefers-reduced-motion preference with immediate reveal.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 7. HTML Data Attributes -->
+      <section id="html-attributes" class="doc-section" data-nano-order="6">
+        <h2>HTML Data Attributes</h2>
+        <p>Control element construction declaratively in HTML:</p>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Attribute</th>
+              <th>Example</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>data-nano-order</code></td>
+              <td><code>&lt;h1 data-nano-order="1"&gt;</code></td>
+              <td>Defines exact numerical construction order.</td>
+            </tr>
+            <tr>
+              <td><code>data-nano-group</code></td>
+              <td><code>&lt;div data-nano-group="cards"&gt;</code></td>
+              <td>Groups elements together for concurrent grouped construction.</td>
+            </tr>
+            <tr>
+              <td><code>data-nano-ignore</code></td>
+              <td><code>&lt;nav data-nano-ignore&gt;</code></td>
+              <td>Bypasses concealment and animation, remaining visible throughout.</td>
+            </tr>
+            <tr>
+              <td><code>data-nano-card</code></td>
+              <td><code>&lt;article data-nano-card&gt;</code></td>
+              <td>Forces boundary and interior sampling for container elements.</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 8. Public API -->
+      <section id="api" class="doc-section" data-nano-order="7">
+        <h2>Public API</h2>
+        <pre><code>// Lifecycle controls
+await nano.start();
+nano.pause();
+nano.resume();
+nano.skip();
+nano.restart();
+nano.destroy();
+
+// State inspection
+const state = nano.getState(); // 'idle' | 'ready' | 'constructing' | 'attracting' | 'completed'
+
+// Event subscriptions
+const unsub = nano.on("complete", () => {
+  console.log("Website constructed and interactive!");
+});
+unsub(); // Unsubscribe when needed</code></pre>
+      </section>
+
+      <!-- 9. Framework Guides -->
+      <section id="integrations" class="doc-section" data-nano-order="8">
+        <h2>Framework Guides</h2>
+        <h3>React &amp; Next.js</h3>
+        <pre><code>import { useEffect, useRef } from "react";
+import { Nano66 } from "nano66";
+
+export function Portfolio() {
+  const rootRef = useRef(null);
+
+  useEffect(() => {
+    if (!rootRef.current) return;
+    const nano = new Nano66({ target: rootRef.current });
+    nano.start();
+
+    return () => nano.destroy();
+  }, []);
+
+  return &lt;div ref={rootRef}&gt;...&lt;/div&gt;;
+}</code></pre>
+      </section>
+
+      <!-- 10. Performance -->
+      <section id="performance" class="doc-section" data-nano-order="9">
+        <h2>Performance Presets</h2>
+        <p>Nano66 provides three pre-tuned performance tiers:</p>
+        <ul style="color: var(--text-secondary); margin-left: 1.5rem; line-height: 1.8;">
+          <li><strong>Low:</strong> ~1,500 particles with simplified flow physics. Ideal for low-power smartphones and older devices.</li>
+          <li><strong>Balanced (Default):</strong> ~4,000 particles with full vector fields, glow blending, and text glyph rasterization.</li>
+          <li><strong>Ultra:</strong> ~8,000+ particles with high-density surface point sampling for 4K displays and dedicated GPUs.</li>
+        </ul>
+      </section>
+
+      <!-- 11. Browser Compatibility -->
+      <section id="compatibility" class="doc-section" data-nano-order="10">
+        <h2>Browser Compatibility</h2>
+        <table class="doc-table">
+          <thead>
+            <tr>
+              <th>Browser</th>
+              <th>Status</th>
+              <th>Renderer Mode</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Chrome / Chromium 90+</td>
+              <td>Supported</td>
+              <td>PixiJS v8 WebGL 2.0 / WebGPU</td>
+            </tr>
+            <tr>
+              <td>Firefox 88+</td>
+              <td>Supported</td>
+              <td>PixiJS v8 WebGL 2.0</td>
+            </tr>
+            <tr>
+              <td>Safari / WebKit 14+</td>
+              <td>Supported</td>
+              <td>PixiJS v8 WebGL 2.0</td>
+            </tr>
+            <tr>
+              <td>Edge 90+</td>
+              <td>Supported</td>
+              <td>PixiJS v8 WebGL 2.0</td>
+            </tr>
+            <tr>
+              <td>Headless / No WebGL</td>
+              <td>Supported</td>
+              <td>Automated Canvas 2D Fallback</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- 12. Troubleshooting -->
+      <section id="troubleshooting" class="doc-section" data-nano-order="11">
+        <h2>Troubleshooting &amp; FAQ</h2>
+        <p><strong>Q: Does Nano66 interfere with my site's responsive CSS or accessibility?</strong></p>
+        <p>A: No. Nano66 preserves the real DOM structure. Layout-preserving visibility techniques ensure dimensions remain intact without layout reflow, and original elements are revealed with full interactive functionality.</p>
+        <p><strong>Q: What happens if an image fails CORS security checks?</strong></p>
+        <p>A: Nano66 catches Canvas security exceptions gracefully and constructs the image silhouette boundary outline without halting the animation.</p>
+      </section>
+    </main>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

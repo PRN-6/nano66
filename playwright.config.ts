@@ -28,5 +28,10 @@ export default defineConfig({
       port: 6602,
       reuseExistingServer: false,
     },
+    {
+      command: "pnpm --filter nano66-docs preview --port 6603",
+      port: 6603,
+      reuseExistingServer: false,
+    },
   ],
 });

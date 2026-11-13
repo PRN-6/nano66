@@ -41,12 +41,11 @@ test.describe("Website 2 — React Integration", () => {
     await skipBtn.click();
 
     const emailInput = page.locator('input[type="email"]');
-    const textarea = page.locator("textarea");
-    const submitBtn = page.locator('button[type="submit"]');
+    await expect(emailInput).toBeVisible();
 
     await emailInput.fill("architect@cloud.dev");
-    await textarea.fill("Need a high-performance cluster for LLM serving.");
-    await submitBtn.click();
+    await page.locator("textarea").fill("Need a high-performance cluster for LLM serving.");
+    await page.locator('button[type="submit"]').click();
 
     await expect(page.locator(".form-wrapper")).toContainText("Request received");
   });

@@ -40,7 +40,9 @@ nano.on("start", () => {
 });
 
 nano.on("elementStart", (el) => {
-  if (statusPill) statusPill.innerText = `Building ${el.type}...`;
+  if (statusPill && nano.getState() === "constructing") {
+    statusPill.innerText = `Building ${el.type}...`;
+  }
 });
 
 nano.on("stateChange", (state) => {
