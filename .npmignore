@@ -1,0 +1,12 @@
+# Root npm ignore
+examples/
+docs/
+tests/
+.github/
+playwright.config.ts
+*.log
+.DS_Store
+Thumbs.db
+coverage/
+node_modules/
+dist/

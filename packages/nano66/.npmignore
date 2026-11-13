@@ -1,0 +1,13 @@
+# Exclude all websites, examples, and test assets from npm package
+examples/
+docs/
+tests/
+.github/
+playwright.config.ts
+vite.config.ts
+tsconfig.json
+*.log
+.DS_Store
+Thumbs.db
+coverage/
+node_modules/
