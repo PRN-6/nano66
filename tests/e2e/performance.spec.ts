@@ -4,6 +4,10 @@ test.describe("Performance & Responsive Behavior", () => {
   test("adjusts canvas dimensions upon viewport resize", async ({ page }) => {
     await page.goto("http://localhost:6601/");
 
+    // Wait until Nano66 is initialized and running
+    const statusPill = page.locator("#status-pill");
+    await expect(statusPill).toHaveText(/Ready|Swimming|Constructing|Building/);
+
     const canvas = page.locator("#nano66-canvas");
     await expect(canvas).toBeAttached();
 
@@ -11,8 +15,12 @@ test.describe("Performance & Responsive Behavior", () => {
     await page.setViewportSize({ width: 375, height: 667 });
 
     await expect
-      .poll(async () => canvas.evaluate((el: HTMLCanvasElement) => el.width))
-      .toBeLessThanOrEqual(375 * 2 + 10);
+      .poll(async () =>
+        canvas.evaluate((el: HTMLCanvasElement) =>
+          Math.round(el.width / (window.devicePixelRatio || 1))
+        )
+      )
+      .toBeLessThanOrEqual(385);
   });
 
   test("runs smoothly and finishes construction without uncaught console errors", async ({ page }) => {

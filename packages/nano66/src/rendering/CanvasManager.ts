@@ -6,7 +6,7 @@ export class CanvasManager {
   private resizeObserver: ResizeObserver | null = null;
   private onResizeCallback?: (width: number, height: number, dpr: number) => void;
 
-  public createOverlay(_target: HTMLElement = document.body): HTMLCanvasElement {
+  public createOverlay(target: HTMLElement = document.body): HTMLCanvasElement {
     if (this.canvas) return this.canvas;
 
     const canvas = document.createElement("canvas");
@@ -30,12 +30,25 @@ export class CanvasManager {
     // Setup window & element resize listener
     if (typeof window !== "undefined") {
       window.addEventListener("resize", this.handleResize);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener("resize", this.handleResize);
+      }
     }
     if (typeof ResizeObserver !== "undefined") {
       this.resizeObserver = new ResizeObserver(() => {
         this.updateDimensions();
       });
-      this.resizeObserver.observe(document.body);
+      if (typeof document !== "undefined") {
+        if (document.documentElement) {
+          this.resizeObserver.observe(document.documentElement);
+        }
+        if (document.body && document.body !== document.documentElement) {
+          this.resizeObserver.observe(document.body);
+        }
+        if (target && target !== document.body && target !== document.documentElement) {
+          this.resizeObserver.observe(target);
+        }
+      }
     }
 
     return canvas;
@@ -73,6 +86,9 @@ export class CanvasManager {
   public destroy(): void {
     if (typeof window !== "undefined") {
       window.removeEventListener("resize", this.handleResize);
+      if (window.visualViewport) {
+        window.visualViewport.removeEventListener("resize", this.handleResize);
+      }
     }
 
     if (this.resizeObserver) {

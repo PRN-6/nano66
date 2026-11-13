@@ -61,6 +61,12 @@ nano.on("elementStart", (el) => {
   }
 });
 
+nano.on("elementTransition", () => {
+  if (statusPill && nano.getState() === "constructing") {
+    statusPill.innerText = "Swimming to next element...";
+  }
+});
+
 nano.on("stateChange", (state) => {
   if (statusPill) {
     if (state === "intro") statusPill.innerText = "Swimming goldfish...";

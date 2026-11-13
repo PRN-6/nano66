@@ -61,6 +61,7 @@ export const App: React.FC = () => {
     nano.on("introStart", () => setStatus("Swimming Goldfish 🐟"));
     nano.on("introScatter", () => setStatus("Scattering Particles ✨"));
     nano.on("start", () => setStatus("Constructing"));
+    nano.on("elementTransition", () => setStatus("Swimming to Element 🐟"));
     nano.on("complete", () => setStatus("Interactive"));
 
     nano.start().catch((err: unknown) => {
